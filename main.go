@@ -16,8 +16,9 @@ func In() chan int {
 			var u int
 			_, err := fmt.Scanf("%d\n", &u)
 			if err != nil {
-				fmt.Println("This isn't number")
+				fmt.Println("Это не номер")
 			} else {
+				fmt.Println("Добавляем номер", u)
 				out <- u
 			}
 		}
@@ -32,6 +33,7 @@ func FilterNegative(in chan int) chan int {
 	go func() {
 		for val := range in {
 			if val >= 0 {
+				fmt.Println("пишем положительное значение в пайп", val)
 				out <- val
 			}
 		}
@@ -46,6 +48,7 @@ func FilterDivThree(in chan int) chan int {
 	go func() {
 		for val := range in {
 			if val%3 != 0 {
+				fmt.Println("отфильтровали значение, делящееся на 3", val)
 				out <- val
 			}
 		}
@@ -57,6 +60,7 @@ func FilterDivThree(in chan int) chan int {
 func Save(b *Buffer, in chan int) {
 	go func() {
 		for val := range in {
+			fmt.Println("сохраняем в буфер", val)
 			b.Push(val)
 		}
 	}()
@@ -77,6 +81,8 @@ func (b *Buffer) Push(val int) {
 	b.m.Lock()
 	defer b.m.Unlock()
 
+	fmt.Println("добавляем в буфер", val)
+
 	if b.pos == b.size-1 {
 		for i := 1; i <= b.size-1; i++ {
 			b.array[i-1] = b.array[i]
@@ -86,7 +92,6 @@ func (b *Buffer) Push(val int) {
 	} else {
 		b.pos++
 		b.array[b.pos] = val
-
 	}
 }
 
@@ -96,6 +101,7 @@ func (b *Buffer) Get() []int {
 
 	var output []int = b.array[:b.pos+1]
 	b.pos = -1
+	fmt.Println("Берем из буфера", output)
 	return output
 }
 
